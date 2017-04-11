@@ -20,3 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+/**
+ * \file        main.cpp
+ * \brief       The main test file and entry point for \p Catch
+ * \author      Kevin Kirchner
+ * \date        2017
+ * \copyright   MIT LICENSE
+ *
+ * This file is the main test file for \p libiban and the entry point for
+ * \p Catch.
+ */
+
+#define CATCH_CONFIG_MAIN
+#include "catch.hpp"

@@ -14,6 +14,31 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Werror -Weverything")
 endif()
 
+# The project version number.
+set(VERSION_MAJOR   0   CACHE STRING "Project major version number.")
+set(VERSION_MINOR   1   CACHE STRING "Project minor version number.")
+set(VERSION_PATCH   0   CACHE STRING "Project patch version number.")
+mark_as_advanced(VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
+
+#configure target for building documentation with Doxygen
+find_package(Doxygen)
+option(BUILD_DOCUMENTATION "Create HTML documentation of API with Doxygen" OFF)
+if(BUILD_DOCUMENTATION)
+    if (NOT DOXYGEN_FOUND)
+        message(FATAL_ERROR "Doxygen is needed for building documentation")
+    endif()
+    message("Building documentation ...")
+    set(doxy_in ${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in)
+    set(doxy ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+
+    configure_file(${doxy_in} ${doxy} @ONLY)
+    add_custom_target(doc
+            COMMAND ${DOXYGEN_EXECUTABLE} ${doxy}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            COMMENT "Generate documentation with Doxygen"
+            VERBATIM)
+endif()
+
 set(SOURCE_FILES src/libiban.h src/libiban.cpp)
 add_library(libiban SHARED ${SOURCE_FILES})
 
