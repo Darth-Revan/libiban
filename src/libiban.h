@@ -93,6 +93,18 @@ public:
     bool validate() const;
 
     /**
+     * Overrides the stream operator << for IBAN.
+     *
+     * @param stream The stream to write to
+     * @param elem The element to write to the stream
+     * @return The stream written to
+     */
+    friend std::ostream& operator<<(std::ostream& stream, const IBAN& elem) {
+        stream << "IBAN (" << elem.m_countryCode << elem.getChecksum() << elem.getBBAN() << ")";
+        return stream;
+    }
+
+    /**
      * Swaps \p first and \p second by swapping their member variables' values.
      *
      * @param first First instance of \p IBAN
