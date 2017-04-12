@@ -63,6 +63,31 @@ namespace IBAN {
         return m_message.c_str();
     }
 
+    // initialize country code map
+    const map_t IBAN::m_countryCodes = {
+        {"AL", 28}, {"AD", 24}, {"AT", 20}, {"AZ", 28}, {"BE", 16},
+        {"BH", 22}, {"BA", 20}, {"BR", 29}, {"BG", 22}, {"CR", 22},
+        {"HR", 21}, {"CY", 28}, {"CZ", 24}, {"DK", 18}, {"DO", 28},
+        {"EE", 20}, {"FO", 18}, {"FI", 18}, {"FR", 27}, {"GE", 22},
+        {"DE", 22}, {"GI", 23}, {"GR", 27}, {"GL", 18}, {"GT", 28},
+        {"HU", 28}, {"IS", 26}, {"IE", 22}, {"IL", 23}, {"IT", 27},
+        {"KZ", 20}, {"KW", 30}, {"LV", 21}, {"LB", 28}, {"LI", 21},
+        {"LT", 20}, {"LU", 20}, {"MK", 19}, {"MT", 31}, {"MR", 27},
+        {"MU", 30}, {"MC", 27}, {"MD", 24}, {"ME", 22}, {"NL", 18},
+        {"NO", 15}, {"PK", 24}, {"PS", 29}, {"PL", 28}, {"PT", 25},
+        {"RO", 24}, {"SM", 27}, {"SA", 24}, {"RS", 22}, {"SK", 24},
+        {"SI", 19}, {"ES", 24}, {"SE", 24}, {"CH", 21}, {"TN", 24},
+        {"TR", 26}, {"AE", 23}, {"GB", 22}, {"VG", 24}, {"BJ", 28},
+        {"BF", 28}, {"BI", 16}, {"CM", 27}, {"CV", 25}, {"TL", 23},
+        {"IR", 26}, {"CI", 28}, {"JO", 30}, {"SA", 24}, {"MG", 27},
+        {"ML", 28}, {"MZ", 25}, {"QA", 29}, {"XK", 20}, {"SN", 28},
+        {"LC", 32}, {"ST", 25}, {"UA", 29}, {"SC", 31}, {"IQ", 23},
+        {"BY", 28}, {"SV", 28}, {"AO", 25}, {"CF", 27}, {"CG", 27},
+        {"EG", 27}, {"DJ", 27}, {"DZ", 24}, {"GA", 27}, {"GQ", 27},
+        {"GW", 25}, {"MA", 28}, {"NE", 28}, {"TD", 27}, {"TG", 28},
+        {"KM", 27}, {"HN", 28}, {"NI", 32},
+    };
+
     /**
      * Tries to create a new instance of \p IBAN from a string parameter. If
      * parsing fails, the methods throws an \p IBANParseException. This happens
@@ -161,5 +186,67 @@ namespace IBAN {
         }
         result << m_accountIdentifier;
         return result.str();
+    }
+
+    /**
+     * Validates the underlying object according to the IBAN format
+     * specification and returns a boolean value indicating validation status.
+     *
+     * @return \p true if IBAN is valid, \p false otherwise
+     */
+    bool IBAN::validate() const {
+        // invalid country code
+        if (m_countryCodes.find(m_countryCode) == m_countryCodes.end()) {
+            return false;
+        }
+        size_t expectedLength = m_countryCodes.find(m_countryCode)->second;
+
+        // pad checksum
+        std::string checksum = std::to_string(m_checkSum);
+        while (checksum.length() < 2) {
+            checksum = "0" + checksum;
+        }
+
+        // concat string and check length
+        std::string checkString = m_accountIdentifier + m_countryCode + checksum;
+        if (checkString.length() != expectedLength) {
+            return false;
+        }
+
+        std::string numeric = "";
+
+        // string substitution
+        for (auto ch : checkString) {
+            if (std::isdigit(ch)) {
+                numeric += ch;        // convert numeric char to integer
+            } else if (std::isalpha(ch)) {
+                // get position in latin alphabet and add 9
+                numeric += std::to_string((31 & ch) + 9);
+            } else {
+                return false;
+            }
+        }
+
+        size_t seg = 0;
+        size_t step = 9;
+        std::string prepended {};
+        long number = 0;
+
+        // the numeric string does not fit into any long integer data type,
+        // so we have to check the string stepwise; first a single 9 char
+        // step, then 7 char steps until we reach the end
+        while (seg  < numeric.length( ) - step ) {
+            number = std::stol(prepended + numeric.substr(seg , step));
+            int remainder = static_cast<int>(number % 97);
+            prepended = std::to_string(remainder);
+
+            if (remainder < 10) {
+                prepended = "0" + prepended;
+            }
+            seg += step;
+            step = 7;
+        }
+        number = std::stol(prepended + numeric.substr(seg)) ;
+        return (number % 97 == 1);
     }
 }

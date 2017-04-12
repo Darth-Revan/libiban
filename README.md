@@ -17,6 +17,15 @@ make libiban
 
 For building the tests change the target of _make_ to `libiban_test`.
 
+---
+
+**Note:** All IBAN numbers used for testing the validation function were
+collected from [https://www.iban.com/structure.html](https://www.iban.com/structure.html)
+and have been publicly available before. I did not intentionally incorporate any
+IBAN number into the tests that may be linked to existing bank accounts.
+
+---
+
 In order to build the documentation with _Doxygen_, change the target of _make_ to `doc`.
 This will create a full API documentation in a directory _doc_ inside the
 build directory.
