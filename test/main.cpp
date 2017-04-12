@@ -86,6 +86,20 @@ TEST_CASE("createFromString", "[libiban]") {
     }
 }
 
+// Test case for comparison operators
+TEST_CASE("Comparison operators", "[libiban]") {
+    IBAN::IBAN iban = IBAN::IBAN::createFromString("DE68 2105 0170 0012 3456 78");
+    IBAN::IBAN iban2 = IBAN::IBAN::createFromString("DE68210501700012345678");
+    IBAN::IBAN iban3 = IBAN::IBAN::createFromString("LI4212345678901234567");
+    REQUIRE(iban == iban2);
+    REQUIRE(iban2 == iban);
+    REQUIRE(iban != iban3);
+    REQUIRE(iban3 != iban);
+    REQUIRE(iban2 != iban3);
+    REQUIRE(iban3 != iban2);
+    REQUIRE(iban == iban);
+}
+
 // Test case for machine form output
 TEST_CASE("getMachineForm", "[libiban]") {
     IBAN::IBAN iban = IBAN::IBAN::createFromString("DE68 2105 0170 0012 3456 78");

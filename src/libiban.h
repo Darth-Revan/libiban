@@ -103,10 +103,12 @@ public:
     IBAN(const IBAN&)=default;
     ~IBAN() {}
     IBAN& operator=(IBAN other);
+    bool operator==(const IBAN& other) const;
+    bool operator!=(const IBAN& other) const;
     static IBAN createFromString(const std::string& string);
-    std::string getCountryCode();
-    std::string getAccountIdentifier();
-    size_t getChecksum();
+    std::string getCountryCode() const;
+    std::string getAccountIdentifier() const;
+    size_t getChecksum() const;
     std::string getHumanReadable();
     std::string getMachineForm();
 
@@ -125,6 +127,28 @@ public:
     }
 
 }; // end of class IBAN
+
+/**
+ * Overloads the comparison operator ==.
+ *
+ * @param other The object to compare with
+ * @return \p true if both objects are equal, \p false otherwise
+ */
+inline bool IBAN::operator==(const IBAN &other) const {
+    return ((this->getCountryCode() == other.getCountryCode()) &&
+            (this->getChecksum() == other.getChecksum()) &&
+            (this->getAccountIdentifier() == other.getAccountIdentifier()));
+}
+
+/**
+ * Overloads the comparison operator !=.
+ *
+ * @param other The object to compare with
+ * @return \p true if the objects are not equal, \p false if they are equal
+ */
+inline bool IBAN::operator!=(const IBAN &other) const {
+    return !(*this == other);
+}
 
 } // end of namespace IBAN
 

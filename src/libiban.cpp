@@ -127,7 +127,7 @@ namespace IBAN {
      *
      * @return The account identifier of the IBAN
      */
-    std::string IBAN::getAccountIdentifier() {
+    std::string IBAN::getAccountIdentifier() const {
         return m_accountIdentifier;
     }
 
@@ -136,7 +136,7 @@ namespace IBAN {
      *
      * @return The checksum of the IBAN
      */
-    size_t IBAN::getChecksum() {
+    size_t IBAN::getChecksum() const {
         return m_checkSum;
     }
 
@@ -145,7 +145,7 @@ namespace IBAN {
      *
      * @return The country code of the IBAN
      */
-    std::string IBAN::getCountryCode() {
+    std::string IBAN::getCountryCode() const {
         return m_countryCode;
     }
 
