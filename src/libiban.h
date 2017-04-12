@@ -83,6 +83,7 @@ public:
     IBAN& operator=(IBAN other);
     bool operator==(const IBAN& other) const;
     bool operator!=(const IBAN& other) const;
+    friend std::ostream& operator<<(std::ostream& stream, const IBAN& elem);
     static const map_t m_countryCodes;
     static IBAN createFromString(const std::string& string);
     std::string getCountryCode() const;
@@ -91,18 +92,6 @@ public:
     std::string getHumanReadable() const;
     std::string getMachineForm() const;
     bool validate() const;
-
-    /**
-     * Overrides the stream operator << for IBAN.
-     *
-     * @param stream The stream to write to
-     * @param elem The element to write to the stream
-     * @return The stream written to
-     */
-    friend std::ostream& operator<<(std::ostream& stream, const IBAN& elem) {
-        stream << "IBAN (" << elem.m_countryCode << elem.getChecksum() << elem.getBBAN() << ")";
-        return stream;
-    }
 
     /**
      * Swaps \p first and \p second by swapping their member variables' values.
@@ -151,6 +140,18 @@ inline IBAN& IBAN::operator=(IBAN other) {
     IBAN temp(other);
     swap(*this, temp);
     return *this;
+}
+
+/**
+ * Overrides the stream operator << for IBAN.
+ *
+ * @param stream The stream to write to
+ * @param elem The element to write to the stream
+ * @return The stream written to
+ */
+inline std::ostream& operator<<(std::ostream& stream, const IBAN& elem) {
+    stream << "IBAN (" << elem.getHumanReadable() << ")";
+    return stream;
 }
 
 } // end of namespace IBAN

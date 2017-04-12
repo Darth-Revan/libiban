@@ -93,15 +93,15 @@ TEST_CASE("stream operator", "[libiban]") {
     IBAN::IBAN iban3 = IBAN::IBAN::createFromString("LI4212345678901234567");
     std::ostringstream out("");
     out << iban;
-    REQUIRE(out.str() == "IBAN (DE68210501700012345678)");
+    REQUIRE(out.str() == "IBAN (DE68 2105 0170 0012 3456 78)");
 
     out.str("");
     out << iban2;
-    REQUIRE(out.str() == "IBAN (DE68210501700012345678)");
+    REQUIRE(out.str() == "IBAN (DE68 2105 0170 0012 3456 78)");
 
     out.str("");
     out << iban3;
-    REQUIRE(out.str() == "IBAN (LI4212345678901234567)");
+    REQUIRE(out.str() == "IBAN (LI42 1234 5678 9012 3456 7)");
 }
 
 
