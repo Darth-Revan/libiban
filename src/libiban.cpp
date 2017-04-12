@@ -167,7 +167,7 @@ namespace IBAN {
      *
      * @return Machine friendly representation of the IBAN
      */
-    std::string IBAN::getMachineForm() {
+    std::string IBAN::getMachineForm() const {
         return m_countryCode + m_checkSum + m_bban;
     }
 
@@ -177,13 +177,12 @@ namespace IBAN {
      *
      * @return Human readable representation of the IBAN
      */
-    std::string IBAN::getHumanReadable() {
+    std::string IBAN::getHumanReadable() const {
         std::stringstream result("");
         result << m_countryCode << m_checkSum;
-        for (size_t i = 0; i < m_bban.length(); i += 5) {
-            m_bban.insert(i, 1, ' ');
+        for (size_t i = 0; i < m_bban.length(); i += 4) {
+            result << " " << m_bban.substr(i, 4);
         }
-        result << m_bban;
         return result.str();
     }
 

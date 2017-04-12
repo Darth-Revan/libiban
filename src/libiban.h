@@ -88,8 +88,8 @@ public:
     std::string getCountryCode() const;
     std::string getBBAN() const;
     std::string getChecksum() const;
-    std::string getHumanReadable();
-    std::string getMachineForm();
+    std::string getHumanReadable() const;
+    std::string getMachineForm() const;
     bool validate() const;
 
     /**
