@@ -150,6 +150,18 @@ inline bool IBAN::operator!=(const IBAN &other) const {
     return !(*this == other);
 }
 
+/**
+ * Implements assignment operator.
+ *
+ * @param other The other instance to assign
+ * @return An instance of \p IBAN
+ */
+inline IBAN& IBAN::operator=(IBAN other) {
+    IBAN temp(other);
+    swap(*this, temp);
+    return *this;
+}
+
 } // end of namespace IBAN
 
 #endif //LIBIBAN_LIBIBAN_H

@@ -64,18 +64,6 @@ namespace IBAN {
     }
 
     /**
-     * Implements assignment operator.
-     *
-     * @param other The other instance to assign
-     * @return An instance of \p IBAN
-     */
-    IBAN& IBAN::operator=(IBAN other) {
-        IBAN temp(other);
-        swap(*this, temp);
-        return *this;
-    }
-
-    /**
      * Tries to create a new instance of \p IBAN from a string parameter. If
      * parsing fails, the methods throws an \p IBANParseException. This happens
      * if the string is too short to be an IBAN number or if it contains invalid
