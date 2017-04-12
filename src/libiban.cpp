@@ -139,8 +139,8 @@ namespace IBAN {
      *
      * @return The account identifier of the IBAN
      */
-    std::string IBAN::getAccountIdentifier() const {
-        return m_accountIdentifier;
+    std::string IBAN::getBBAN() const {
+        return m_bban;
     }
 
     /**
@@ -168,7 +168,7 @@ namespace IBAN {
      * @return Machine friendly representation of the IBAN
      */
     std::string IBAN::getMachineForm() {
-        return m_countryCode + m_checkSum + m_accountIdentifier;
+        return m_countryCode + m_checkSum + m_bban;
     }
 
     /**
@@ -180,10 +180,10 @@ namespace IBAN {
     std::string IBAN::getHumanReadable() {
         std::stringstream result("");
         result << m_countryCode << m_checkSum;
-        for (size_t i = 0; i < m_accountIdentifier.length(); i += 5) {
-            m_accountIdentifier.insert(i, 1, ' ');
+        for (size_t i = 0; i < m_bban.length(); i += 5) {
+            m_bban.insert(i, 1, ' ');
         }
-        result << m_accountIdentifier;
+        result << m_bban;
         return result.str();
     }
 
@@ -201,7 +201,7 @@ namespace IBAN {
         size_t expectedLength = m_countryCodes.find(m_countryCode)->second;
 
         // concat string and check length
-        std::string checkString = m_accountIdentifier + m_countryCode + m_checkSum;
+        std::string checkString = m_bban + m_countryCode + m_checkSum;
         if (checkString.length() != expectedLength) {
             return false;
         }

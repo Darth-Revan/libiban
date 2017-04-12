@@ -68,13 +68,13 @@ class IBAN {
 private:
     /// Holds the IBAN's country code
     std::string m_countryCode {};
-    /// Holds the IBAN's account identifier
-    std::string m_accountIdentifier {};
+    /// Holds the IBAN's Basic Bank Account Number
+    std::string m_bban {};
     /// Holds the IBAN's check sum
     std::string m_checkSum {};
-    IBAN(const std::string& cCode, const std::string& accId,
+    IBAN(const std::string& cCode, const std::string& bban,
          const std::string& checkSum) : m_countryCode(cCode),
-                                  m_accountIdentifier(accId),
+                                  m_bban(bban),
                                   m_checkSum(checkSum) {}
 
 public:
@@ -86,7 +86,7 @@ public:
     static const map_t m_countryCodes;
     static IBAN createFromString(const std::string& string);
     std::string getCountryCode() const;
-    std::string getAccountIdentifier() const;
+    std::string getBBAN() const;
     std::string getChecksum() const;
     std::string getHumanReadable();
     std::string getMachineForm();
@@ -101,7 +101,7 @@ public:
     friend void swap(IBAN& first, IBAN& second) {
         using std::swap;
         swap(first.m_checkSum, second.m_checkSum);
-        swap(first.m_accountIdentifier, second.m_accountIdentifier);
+        swap(first.m_bban, second.m_bban);
         swap(first.m_countryCode, second.m_countryCode);
     }
 
@@ -116,7 +116,7 @@ public:
 inline bool IBAN::operator==(const IBAN &other) const {
     return ((this->getCountryCode() == other.getCountryCode()) &&
             (this->getChecksum() == other.getChecksum()) &&
-            (this->getAccountIdentifier() == other.getAccountIdentifier()));
+            (this->getBBAN() == other.getBBAN()));
 }
 
 /**

@@ -54,18 +54,18 @@ TEST_CASE("createFromString", "[libiban]") {
     IBAN::IBAN iban = IBAN::IBAN::createFromString("DE68 2105 0170 0012 3456 78");
 
     IBAN::IBAN iban2 = iban;
-    REQUIRE(iban.getAccountIdentifier() == iban2.getAccountIdentifier());
+    REQUIRE(iban.getBBAN() == iban2.getBBAN());
     REQUIRE(iban.getCountryCode() == iban2.getCountryCode());
     REQUIRE(iban.getChecksum() == iban2.getChecksum());
 
     IBAN::IBAN iban3 = IBAN::IBAN::createFromString("DE68210501700012345678");
-    REQUIRE(iban.getAccountIdentifier() == iban3.getAccountIdentifier());
+    REQUIRE(iban.getBBAN() == iban3.getBBAN());
     REQUIRE(iban.getCountryCode() == iban3.getCountryCode());
     REQUIRE(iban.getChecksum() == iban3.getChecksum());
 
 
     IBAN::IBAN iban4 = IBAN::IBAN::createFromString("AD43oh8445353ADF");
-    REQUIRE(!iban4.getAccountIdentifier().empty());
+    REQUIRE(!iban4.getBBAN().empty());
     REQUIRE(!iban4.getCountryCode().empty());
     REQUIRE(!iban4.getChecksum().empty());
 
