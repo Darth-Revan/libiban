@@ -91,13 +91,10 @@ private:
     std::string m_countryCode {};
     std::string m_accountIdentifier {};
     size_t m_checkSum {};
-    bool m_validated {};
-    bool m_isValid {};
     IBAN(const std::string& cCode, const std::string& accId,
          const size_t checkSum) : m_countryCode(cCode),
                                   m_accountIdentifier(accId),
-                                  m_checkSum(checkSum),
-                                  m_validated(false), m_isValid(false) {}
+                                  m_checkSum(checkSum) {}
 
 public:
     IBAN(const IBAN&)=default;
@@ -123,7 +120,6 @@ public:
         swap(first.m_checkSum, second.m_checkSum);
         swap(first.m_accountIdentifier, second.m_accountIdentifier);
         swap(first.m_countryCode, second.m_countryCode);
-        swap(first.m_validated, second.m_validated);
     }
 
 }; // end of class IBAN
