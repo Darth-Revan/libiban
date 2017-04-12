@@ -8,10 +8,10 @@ set(CMAKE_CXX_STANDARD 11)
 # set additional flags for GCC and Clang
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     message("Setting additional flags for GCC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Werror")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Werror -Wno-c++98-compat -Wno-c++98-compat-pedantic")
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     message("Setting additional flags for Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Werror -Weverything")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Werror -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded")
 endif()
 
 # The project version number.
@@ -39,8 +39,9 @@ if(BUILD_DOCUMENTATION)
             VERBATIM)
 endif()
 
-set(SOURCE_FILES src/libiban.h src/libiban.cpp)
+set(SOURCE_FILES src/libiban.h src/libiban.cpp src/utils.h src/utils.cpp)
 add_library(libiban SHARED ${SOURCE_FILES})
 
-set(TEST_FILES test/main.cpp ${SOURCE_FILES})
+set(TEST_FILES test/main.cpp src/libiban.h src/utils.h)
 add_executable(libiban_test ${TEST_FILES})
+target_link_libraries(libiban_test libiban)

@@ -34,3 +34,70 @@
 
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
+#include "../src/libiban.h"
+#include "../src/utils.h"
+
+// Test case for trim function in utils.h
+TEST_CASE("trim", "[utils]") {
+    std::string test = "345 sdfnsf8 403  fsdfs \na\t asda";
+    std::string test2 = "";
+    std::string test3 = "\n\n \t asidas da4a sab sd94";
+    std::string test4 = "abfOAHF48tadf";
+    REQUIRE(trim(test) == "345sdfnsf8403fsdfsaasda");
+    REQUIRE(trim(test2) == "");
+    REQUIRE(trim(test3) == "asidasda4asabsd94");
+    REQUIRE(trim(test4) == "abfOAHF48tadf");
+}
+
+// Test case for constructor
+TEST_CASE("createFromString", "[libiban]") {
+    IBAN::IBAN iban = IBAN::IBAN::createFromString("DE68 2105 0170 0012 3456 78");
+
+    IBAN::IBAN iban2 = iban;
+    REQUIRE(iban.getAccountIdentifier() == iban2.getAccountIdentifier());
+    REQUIRE(iban.getCountryCode() == iban2.getCountryCode());
+    REQUIRE(iban.getChecksum() == iban2.getChecksum());
+
+    IBAN::IBAN iban3 = IBAN::IBAN::createFromString("DE68210501700012345678");
+    REQUIRE(iban.getAccountIdentifier() == iban3.getAccountIdentifier());
+    REQUIRE(iban.getCountryCode() == iban3.getCountryCode());
+    REQUIRE(iban.getChecksum() == iban3.getChecksum());
+
+
+    IBAN::IBAN iban4 = IBAN::IBAN::createFromString("AD43oh8445353ADF");
+    REQUIRE(!iban4.getAccountIdentifier().empty());
+    REQUIRE(!iban4.getCountryCode().empty());
+    REQUIRE(iban4.getChecksum());
+
+    try {
+        IBAN::IBAN iban5 = IBAN::IBAN::createFromString("BLA");
+    } catch (const IBAN::IBANParseException& ex) {
+        REQUIRE(ex.what());
+    }
+    try {
+        IBAN::IBAN iban6 = IBAN::IBAN::createFromString("B1af935395");
+    } catch (const IBAN::IBANParseException& ex) {
+        REQUIRE(ex.what());
+    }
+    try {
+        IBAN::IBAN iban7 = IBAN::IBAN::createFromString("DE682105017000/2345678");
+    } catch (const IBAN::IBANParseException& ex) {
+        REQUIRE(ex.what());
+    }
+}
+
+// Test case for machine form output
+TEST_CASE("getMachineForm", "[libiban]") {
+    IBAN::IBAN iban = IBAN::IBAN::createFromString("DE68 2105 0170 0012 3456 78");
+    REQUIRE(iban.getMachineForm() == "DE68210501700012345678");
+    IBAN::IBAN iban2 = IBAN::IBAN::createFromString(" GB82 WEST 1234 5698 7654 32");
+    REQUIRE(iban2.getMachineForm() == "GB82WEST12345698765432");
+}
+
+// Test case for human readable form output
+TEST_CASE("getHumanReadable", "[libiban]") {
+    IBAN::IBAN iban = IBAN::IBAN::createFromString("DE68 2105 0170 0012 3456 78");
+    REQUIRE(iban.getHumanReadable() == "DE68 2105 0170 0012 3456 78");
+    IBAN::IBAN iban2 = IBAN::IBAN::createFromString(" GB82 WEST 1234 5698 7654 32");
+    REQUIRE(iban2.getHumanReadable() == "GB82 WEST 1234 5698 7654 32");
+}
