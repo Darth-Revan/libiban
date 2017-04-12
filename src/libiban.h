@@ -66,11 +66,14 @@ public:
 class IBAN {
 
 private:
+    /// Holds the IBAN's country code
     std::string m_countryCode {};
+    /// Holds the IBAN's account identifier
     std::string m_accountIdentifier {};
-    size_t m_checkSum {};
+    /// Holds the IBAN's check sum
+    std::string m_checkSum {};
     IBAN(const std::string& cCode, const std::string& accId,
-         const size_t checkSum) : m_countryCode(cCode),
+         const std::string& checkSum) : m_countryCode(cCode),
                                   m_accountIdentifier(accId),
                                   m_checkSum(checkSum) {}
 
@@ -84,7 +87,7 @@ public:
     static IBAN createFromString(const std::string& string);
     std::string getCountryCode() const;
     std::string getAccountIdentifier() const;
-    size_t getChecksum() const;
+    std::string getChecksum() const;
     std::string getHumanReadable();
     std::string getMachineForm();
     bool validate() const;

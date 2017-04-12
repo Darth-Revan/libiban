@@ -102,8 +102,7 @@ namespace IBAN {
      */
     IBAN IBAN::createFromString(const std::string &string) {
         std::string s;
-        std::string countryCode{}, accID{};
-        size_t checkSum{};
+        std::string countryCode{}, accID{}, checkSum{};
 
         s = const_cast<std::string&>(string);
         trim(s);
@@ -119,11 +118,11 @@ namespace IBAN {
             throw IBANParseException(string);
         }
         // then two chars for the check sum
-        try {
-            checkSum = static_cast<size_t>(std::stoi(s.substr(2, 2)));
-        } catch (const std::exception) {
+        checkSum = s.substr(2, 2);
+        if (!std::isdigit(checkSum[0]) || !std::isdigit(checkSum[1])) {
             throw IBANParseException(string);
         }
+
         // rest is account ID
         accID = s.substr(4);
         for (auto ch : accID) {
@@ -149,7 +148,7 @@ namespace IBAN {
      *
      * @return The checksum of the IBAN
      */
-    size_t IBAN::getChecksum() const {
+    std::string IBAN::getChecksum() const {
         return m_checkSum;
     }
 
@@ -169,7 +168,7 @@ namespace IBAN {
      * @return Machine friendly representation of the IBAN
      */
     std::string IBAN::getMachineForm() {
-        return m_countryCode + std::to_string(m_checkSum) + m_accountIdentifier;
+        return m_countryCode + m_checkSum + m_accountIdentifier;
     }
 
     /**
@@ -201,14 +200,8 @@ namespace IBAN {
         }
         size_t expectedLength = m_countryCodes.find(m_countryCode)->second;
 
-        // pad checksum
-        std::string checksum = std::to_string(m_checkSum);
-        while (checksum.length() < 2) {
-            checksum = "0" + checksum;
-        }
-
         // concat string and check length
-        std::string checkString = m_accountIdentifier + m_countryCode + checksum;
+        std::string checkString = m_accountIdentifier + m_countryCode + m_checkSum;
         if (checkString.length() != expectedLength) {
             return false;
         }
