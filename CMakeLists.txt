@@ -53,13 +53,13 @@ else()
 endif()
 
 set(SOURCE_FILES src/libiban.h src/libiban.cpp src/utils.h src/utils.cpp)
-add_library(libiban SHARED ${SOURCE_FILES})
+add_library(iban SHARED ${SOURCE_FILES})
 
 # link against Boost if required
 if (USE_BOOST_RANDOM)
-    target_link_libraries(libiban ${Boost_LIBRARIES})
+    target_link_libraries(iban ${Boost_LIBRARIES})
 endif()
 
 set(TEST_FILES test/main.cpp src/libiban.h src/utils.h)
 add_executable(libiban_test ${TEST_FILES})
-target_link_libraries(libiban_test libiban)
+target_link_libraries(libiban_test iban)
