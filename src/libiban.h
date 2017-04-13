@@ -43,6 +43,7 @@
 
 namespace IBAN {
 
+/// Used as a shortcut for the country codes map type
 typedef std::unordered_map<std::string, size_t> map_t;
 
 /// Exception to be thrown when parsing an IBAN string fails
@@ -57,9 +58,11 @@ private:
 public:
     IBANParseException(const std::string& iban) noexcept;
     virtual ~IBANParseException();
-    IBANParseException(const IBANParseException& other)=default;
     virtual const char* what() const noexcept;
 
+    /// Copy constructor for \p IBANParseException. Uses the default copy
+    /// constructor
+    IBANParseException(const IBANParseException& other)=default;
 };
 
 /// Exception to be thrown when a country code is not valid
@@ -74,9 +77,11 @@ private:
 public:
     IBANInvalidCountryCodeException(const std::string& countryCode) noexcept;
     virtual ~IBANInvalidCountryCodeException();
-    IBANInvalidCountryCodeException(const IBANInvalidCountryCodeException& other)=default;
     virtual const char* what() const noexcept;
 
+    /// Copy constructor for \p IBANInvalidCountryCodeException. Uses the
+    /// default copy constructor
+    IBANInvalidCountryCodeException(const IBANInvalidCountryCodeException& other)=default;
 };
 
 /// Main class of the library
@@ -95,13 +100,13 @@ private:
                                   m_checkSum(checkSum) {}
 
 public:
+    /// Copy constructor for \p IBAN. Uses the default copy constructor
     IBAN(const IBAN&)=default;
     ~IBAN() {}
     IBAN& operator=(IBAN other);
     bool operator==(const IBAN& other) const;
     bool operator!=(const IBAN& other) const;
     friend std::ostream& operator<<(std::ostream& stream, const IBAN& elem);
-    static const map_t m_countryCodes;
     static IBAN createFromString(const std::string& string);
     static IBAN generateIBAN(const std::string& countryCode);
     std::string getCountryCode() const;
@@ -110,6 +115,10 @@ public:
     std::string getHumanReadable() const;
     std::string getMachineForm() const;
     bool validate() const;
+
+    /// Static map mapping country codes to required IBAN length; must be
+    /// initialized in a source file.
+    static const map_t m_countryCodes;
 
     /**
      * Swaps \p first and \p second by swapping their member variables' values.
