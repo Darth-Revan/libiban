@@ -63,6 +63,32 @@ namespace IBAN {
         return m_message.c_str();
     }
 
+    /**
+     * Constructor for \p IBANInvalidCountryCodeException.
+     *
+     * @param countryCode The country code that caused the exception
+     */
+    IBANInvalidCountryCodeException::IBANInvalidCountryCodeException(
+            const std::string &countryCode) noexcept :
+            m_countryCode(countryCode){
+        m_message = "Invalid country code " + m_countryCode;
+    }
+
+    /**
+    * Destructor for \p IBANInvalidCountryCodeException.
+    */
+    IBANInvalidCountryCodeException::~IBANInvalidCountryCodeException() {}
+
+    /**
+     * Overrides the function \p what() for this exception and returns a
+     * string describing the error.
+     *
+     * @return A string describing the error
+     */
+    const char* IBANInvalidCountryCodeException::what() const noexcept {
+        return m_message.c_str();
+    }
+
     // initialize country code map
     const map_t IBAN::m_countryCodes = {
         {"AL", 28}, {"AD", 24}, {"AT", 20}, {"AZ", 28}, {"BE", 16},
@@ -240,5 +266,73 @@ namespace IBAN {
         }
         number = std::stol(prepended + numeric.substr(seg)) ;
         return (number % 97 == 1);
+    }
+
+    /**
+     * This function generates a IBAN number with a given country code. The
+     * resulting IBAN number will be a valid IBAN according to the specification.
+     * This function will throw a \p IBANInvalidCountryCodeException if the
+     * entered country codes is not valid.
+     *
+     * \b Note: The generated IBAN number is for testing purposes only. Do not
+     * use them for banking, as only banks can generate and assign valid IBANs
+     * for this purpose. Using a self-generated IBAN for banking will most
+     * probably cause legal problems for you. I am in no way responsible for
+     * the consequences resulting from using the generated numbers.
+     *
+     * @param countryCode The code of the country to generate a IBAN for
+     * @return A newly generated valid IBAN
+     */
+    IBAN IBAN::generateIBAN(const std::string &countryCode) {
+        if (m_countryCodes.find(countryCode) == m_countryCodes.end()) {
+            throw IBANInvalidCountryCodeException(countryCode);
+        }
+        size_t ibanSize = m_countryCodes.find(countryCode)->second;
+
+        // generate string and append country code and '00' (initial checksum)
+        std::string ibanString = generateRandomString(ibanSize - 4);
+
+        std::string numeric = "";
+        // string substitution
+        for (auto ch : ibanString + countryCode + "00") {
+            if (std::isdigit(ch)) {
+                numeric += ch;        // convert numeric char to integer
+            } else if (std::isalpha(ch)) {
+                // get position in latin alphabet and add 9
+                numeric += std::to_string((31 & ch) + 9);
+            } else {
+                throw std::runtime_error("Unexpected character received from generateRandomString(): " + std::to_string(ch));
+            }
+        }
+
+        size_t seg = 0;
+        size_t step = 9;
+        std::string prepended {};
+        long number = 0;
+
+        // the numeric string does not fit into any long integer data type,
+        // so we have to check the string stepwise; first a single 9 char
+        // step, then 7 char steps until we reach the end
+        while (seg  < numeric.length( ) - step ) {
+            number = std::stol(prepended + numeric.substr(seg , step));
+            int remainder = static_cast<int>(number % 97);
+            prepended = std::to_string(remainder);
+
+            if (remainder < 10) {
+                prepended = "0" + prepended;
+            }
+            seg += step;
+            step = 7;
+        }
+        number = std::stol(prepended + numeric.substr(seg)) ;
+        long check = 98 - (number % 97);
+        auto checksum = std::to_string(check);
+
+        while (checksum.length() < 2) {
+            checksum = "0" + checksum;
+        }
+
+        IBAN iban = createFromString(countryCode + checksum + ibanString);
+        return iban;
     }
 }

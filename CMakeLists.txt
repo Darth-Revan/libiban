@@ -39,8 +39,12 @@ if(BUILD_DOCUMENTATION)
             VERBATIM)
 endif()
 
+# find Boost Random for generating random numbers
+find_package(Boost COMPONENTS random REQUIRED)
+
 set(SOURCE_FILES src/libiban.h src/libiban.cpp src/utils.h src/utils.cpp)
 add_library(libiban SHARED ${SOURCE_FILES})
+target_link_libraries(libiban ${Boost_LIBRARIES})
 
 set(TEST_FILES test/main.cpp src/libiban.h src/utils.h)
 add_executable(libiban_test ${TEST_FILES})

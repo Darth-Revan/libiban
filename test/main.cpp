@@ -49,6 +49,16 @@ TEST_CASE("trim", "[utils]") {
     REQUIRE(trim(test4) == "abfOAHF48tadf");
 }
 
+TEST_CASE("generateRandomString", "[utils]") {
+    std::string test = generateRandomString(12);
+    std::string test2 = generateRandomString(12);
+    std::string test3 = generateRandomString(5);
+    REQUIRE(test.length() == 12);
+    REQUIRE(test2.length() == 12);
+    REQUIRE(test3.length() == 5);
+    REQUIRE(test != test2);
+}
+
 // Test case for constructor
 TEST_CASE("createFromString", "[libiban]") {
     IBAN::IBAN iban = IBAN::IBAN::createFromString("DE68 2105 0170 0012 3456 78");
@@ -301,5 +311,26 @@ TEST_CASE("validate", "[libiban]") {
     for (const auto& str : invalid) {
         auto num = IBAN::IBAN::createFromString(str);
         REQUIRE(!num.validate());
+    }
+}
+
+TEST_CASE("generateIBAN", "[libiban]") {
+    auto iban = IBAN::IBAN::generateIBAN("DE");
+    auto iban2 = IBAN::IBAN::generateIBAN("GB");
+    auto iban3 = IBAN::IBAN::generateIBAN("FO");
+
+    REQUIRE(iban.validate());
+    REQUIRE(iban.getCountryCode() == "DE");
+
+    REQUIRE(iban2.validate());
+    REQUIRE(iban2.getCountryCode() == "GB");
+
+    REQUIRE(iban3.validate());
+    REQUIRE(iban3.getCountryCode() == "FO");
+
+    try {
+        auto iban4 = IBAN::IBAN::generateIBAN("XX");
+    } catch (const IBAN::IBANInvalidCountryCodeException& ex) {
+        REQUIRE(ex.what());
     }
 }

@@ -32,4 +32,25 @@
  */
 
 #include "utils.h"
+#include <cstdlib>
+#include <ctime>
+#include <boost/random/random_device.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
+
+/**
+ * Generates and returns a randomly generated alphanumeric string.
+ *
+ * @param length The desired length of the string
+ * @return Randomly generated alphanumeric string with length \p length
+ */
+std::string generateRandomString(const size_t length) {
+    static const std::string chars("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+    boost::random::random_device rng;
+    boost::random::uniform_int_distribution<> index_dist(0, static_cast<int>(chars.size() - 1));
+    std::string str = "";
+    for (size_t i = 0; i < length; i++) {
+        str.push_back(chars[static_cast<size_t>(index_dist(rng))]);
+    }
+    return str;
+}
 

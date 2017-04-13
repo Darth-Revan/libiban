@@ -50,5 +50,13 @@ inline std::string& trim(std::string& s) {
     return s;
 }
 
+/**
+ * Generates and returns a randomly generated alphanumeric string.
+ *
+ * @param length The desired length of the string
+ * @return Randomly generated alphanumeric string with length \p length
+ */
+std::string generateRandomString(const size_t length);
+
 
 #endif //LIBIBAN_UTILS_H

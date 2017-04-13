@@ -62,6 +62,23 @@ public:
 
 };
 
+/// Exception to be thrown when a country code is not valid
+class IBANInvalidCountryCodeException : std::exception {
+
+private:
+    /// Holds the country code causing the error
+    std::string m_countryCode;
+    /// The exception message
+    std::string m_message;
+
+public:
+    IBANInvalidCountryCodeException(const std::string& countryCode) noexcept;
+    virtual ~IBANInvalidCountryCodeException();
+    IBANInvalidCountryCodeException(const IBANInvalidCountryCodeException& other)=default;
+    virtual const char* what() const noexcept;
+
+};
+
 /// Main class of the library
 class IBAN {
 
@@ -86,6 +103,7 @@ public:
     friend std::ostream& operator<<(std::ostream& stream, const IBAN& elem);
     static const map_t m_countryCodes;
     static IBAN createFromString(const std::string& string);
+    static IBAN generateIBAN(const std::string& countryCode);
     std::string getCountryCode() const;
     std::string getBBAN() const;
     std::string getChecksum() const;
