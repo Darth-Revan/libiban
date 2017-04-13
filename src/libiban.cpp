@@ -231,19 +231,7 @@ namespace IBAN {
             return false;
         }
 
-        std::string numeric = "";
-
-        // string substitution
-        for (auto ch : checkString) {
-            if (std::isdigit(ch)) {
-                numeric += ch;        // convert numeric char to integer
-            } else if (std::isalpha(ch)) {
-                // get position in latin alphabet and add 9
-                numeric += std::to_string((31 & ch) + 9);
-            } else {
-                return false;
-            }
-        }
+        std::string numeric = makeNumerical(checkString);
 
         size_t seg = 0;
         size_t step = 9;
@@ -292,18 +280,7 @@ namespace IBAN {
         // generate string and append country code and '00' (initial checksum)
         std::string ibanString = generateRandomString(ibanSize - 4);
 
-        std::string numeric = "";
-        // string substitution
-        for (auto ch : ibanString + countryCode + "00") {
-            if (std::isdigit(ch)) {
-                numeric += ch;        // convert numeric char to integer
-            } else if (std::isalpha(ch)) {
-                // get position in latin alphabet and add 9
-                numeric += std::to_string((31 & ch) + 9);
-            } else {
-                throw std::runtime_error("Unexpected character received from generateRandomString(): " + std::to_string(ch));
-            }
-        }
+        std::string numeric = makeNumerical(ibanString + countryCode + "00");
 
         size_t seg = 0;
         size_t step = 9;

@@ -36,6 +36,7 @@
 
 #include <string>
 #include <algorithm>
+#include <stdexcept>
 
 /**
  * Trims a string and removes whitespace characters.
@@ -57,6 +58,33 @@ inline std::string& trim(std::string& s) {
  * @return Randomly generated alphanumeric string with length \p length
  */
 std::string generateRandomString(const size_t length);
+
+/**
+ * Makes a string numerical by substituting letters by their position in
+ * the alphabet plus \p add (default: 9). This is a common operation in
+ * IBAN verification and calculation.
+ * Throws a \p std::runtime_error if \p string contains non-alphanumerical
+ * characters.
+ *
+ * @param string The string to convert
+ * @param add An integer value to add to the value of a letter (default: 9)
+ * @return Copy of the converted string
+ * @throws runtime_error If \p string contains non-alphanumerical characters
+ */
+inline std::string makeNumerical(const std::string &string, const size_t add = 9) {
+    std::string numeric = "";
+    for (auto& ch : string) {
+        if (std::isdigit(ch)) {
+            numeric.push_back(ch);
+        } else if (std::isalpha(ch)) {
+            // get position in latin alphabet and add \p add
+            numeric += std::to_string( (31 & ch) + add );
+        } else {
+            throw std::runtime_error("Unexpected character: " + std::to_string(ch));
+        }
+    }
+    return numeric;
+}
 
 
 #endif //LIBIBAN_UTILS_H
