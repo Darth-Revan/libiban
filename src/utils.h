@@ -86,5 +86,38 @@ inline std::string makeNumerical(const std::string &string, const size_t add = 9
     return numeric;
 }
 
+/**
+ * Takes a numerical IBAN string and calculates its reminder with a stepwise
+ * method and returns it.
+ * Will throw a \p std::runtime_error if there are non-numerical characters
+ * in the string.
+ *
+ * @param string The numerical string to calculate the reminder for
+ * @return The reminder of the numerical string
+ * @throws runtime_error If \p string contains non-numerical characters
+ */
+inline long getReminderForIBANString(const std::string& string) {
+    size_t segment = 0, step = 9;
+    std::string prep {};
+    long num = 0, remainder = 0;
+
+    // the numeric string does not fit into any long integer data type,
+    // so we have to check the string stepwise; first a single 9 char
+    // step, then 7 char steps until we reach the end
+    while (segment < string.length() - step) {
+        num = std::stol(prep + string.substr(segment, step));
+        remainder = num % 97;
+        prep = std::to_string(remainder);
+
+        if (remainder < 10) {
+            prep = "0" + prep;
+        }
+        segment += step;
+        step = 7;
+    }
+    num = std::stol(prep + string.substr(segment));
+    return num % 97;
+}
+
 
 #endif //LIBIBAN_UTILS_H

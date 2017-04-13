@@ -232,28 +232,7 @@ namespace IBAN {
         }
 
         std::string numeric = makeNumerical(checkString);
-
-        size_t seg = 0;
-        size_t step = 9;
-        std::string prepended {};
-        long number = 0;
-
-        // the numeric string does not fit into any long integer data type,
-        // so we have to check the string stepwise; first a single 9 char
-        // step, then 7 char steps until we reach the end
-        while (seg  < numeric.length( ) - step ) {
-            number = std::stol(prepended + numeric.substr(seg , step));
-            int remainder = static_cast<int>(number % 97);
-            prepended = std::to_string(remainder);
-
-            if (remainder < 10) {
-                prepended = "0" + prepended;
-            }
-            seg += step;
-            step = 7;
-        }
-        number = std::stol(prepended + numeric.substr(seg)) ;
-        return (number % 97 == 1);
+        return getReminderForIBANString(numeric) == 1;
     }
 
     /**
@@ -281,30 +260,9 @@ namespace IBAN {
         std::string ibanString = generateRandomString(ibanSize - 4);
 
         std::string numeric = makeNumerical(ibanString + countryCode + "00");
+        auto checksum = std::to_string(98 - getReminderForIBANString(numeric));
 
-        size_t seg = 0;
-        size_t step = 9;
-        std::string prepended {};
-        long number = 0;
-
-        // the numeric string does not fit into any long integer data type,
-        // so we have to check the string stepwise; first a single 9 char
-        // step, then 7 char steps until we reach the end
-        while (seg  < numeric.length( ) - step ) {
-            number = std::stol(prepended + numeric.substr(seg , step));
-            int remainder = static_cast<int>(number % 97);
-            prepended = std::to_string(remainder);
-
-            if (remainder < 10) {
-                prepended = "0" + prepended;
-            }
-            seg += step;
-            step = 7;
-        }
-        number = std::stol(prepended + numeric.substr(seg)) ;
-        long check = 98 - (number % 97);
-        auto checksum = std::to_string(check);
-
+        // pad checksum
         while (checksum.length() < 2) {
             checksum = "0" + checksum;
         }
