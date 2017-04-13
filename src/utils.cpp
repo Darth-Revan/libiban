@@ -32,8 +32,10 @@
  */
 
 #include "utils.h"
-#include <cstdlib>
-#include <ctime>
+
+// If using Boost Random
+#if USE_BOOST
+
 #include <boost/random/random_device.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
@@ -54,3 +56,31 @@ std::string generateRandomString(const size_t length) {
     return str;
 }
 
+#else
+
+#include <ctime>
+
+/**
+ * Generates and returns a randomly generated alphanumeric string.
+ *
+ * @param length The desired length of the string
+ * @return Randomly generated alphanumeric string with length \p length
+ */
+std::string generateRandomString(const size_t length) {
+    static const std::string chars("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+
+    // add a changing factor 'div' to seed so there is a bit more diversity
+    // The test will fail without it, because they are running so fast, that
+    // each of them gets the same random number xD
+    static long div = 100;
+    std::srand(static_cast<unsigned int>(std::time(0) + (div % 1000000)));
+    div += 42;
+
+    std::string str = "";
+    for (size_t i = 0; i < length; i++) {
+        str.push_back(chars[static_cast<size_t>(std::rand()) % (chars.length() - 1)]);
+    }
+    return str;
+}
+
+#endif

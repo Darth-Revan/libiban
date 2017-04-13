@@ -40,11 +40,25 @@ if(BUILD_DOCUMENTATION)
 endif()
 
 # find Boost Random for generating random numbers
-find_package(Boost COMPONENTS random REQUIRED)
+option(USE_BOOST_RANDOM "Use Boost Random instead of standard library rand() for generating IBANs." ON)
+if (USE_BOOST_RANDOM)
+    find_package(Boost COMPONENTS random)
+    if(NOT Boost_FOUND)
+        message(FATAL_ERROR "Boost Random is required, but could not be found!")
+    endif()
+    message("Building with Boost Random ...")
+    add_definitions(-DUSE_BOOST=1)
+else()
+    message("Building without using Boost ...")
+endif()
 
 set(SOURCE_FILES src/libiban.h src/libiban.cpp src/utils.h src/utils.cpp)
 add_library(libiban SHARED ${SOURCE_FILES})
-target_link_libraries(libiban ${Boost_LIBRARIES})
+
+# link against Boost if required
+if (USE_BOOST_RANDOM)
+    target_link_libraries(libiban ${Boost_LIBRARIES})
+endif()
 
 set(TEST_FILES test/main.cpp src/libiban.h src/utils.h)
 add_executable(libiban_test ${TEST_FILES})
