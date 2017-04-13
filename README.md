@@ -108,7 +108,7 @@ with the C++11 standard or newer.
 
 The following code snippet shows an example on how to use _libiban_.
 
-```
+```cpp
 #include "libiban.h"
 #include <iostream>
 
